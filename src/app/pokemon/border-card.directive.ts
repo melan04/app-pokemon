@@ -14,10 +14,10 @@ export class BorderCardDirective {
     this.setBorder(this.initialColor);
   }
 
-  @Input('pkmnBorderCard') borderColor: string; // alias 
+  @Input('pkmnBorderCard') borderColor: string;
 
-  @HostListener('mouseenter') onMouseEnter() { // Ecoute le mouvement de la souris 
-    this.setBorder(this.borderColor || this.defaultColor); // Soit la couleur entrée via le HTML grâce au @Input soit la couleur par défaut
+  @HostListener('mouseenter') onMouseEnter() {
+    this.setBorder(this.borderColor || this.defaultColor);
   }
   
   @HostListener('mouseleave') onMouseLeave() {
@@ -29,8 +29,7 @@ export class BorderCardDirective {
   }
 
   setBorder(color: string) {
-    this.el.nativeElement.style.border = `solid 3px ${color}`; 
+    this.el.nativeElement.style.border = `solid 4px ${color}`; 
   }
 
 }
-

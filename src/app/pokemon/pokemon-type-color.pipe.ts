@@ -1,15 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
-  
-/*
- * Affiche la couleur correspondant au type du pokémon.
- * Prend en argument le type du pokémon.
- * Exemple d'utilisation:
- *   {{ pokemon.type | pokemonTypeColor }}
-*/
-@Pipe({name: 'pokemonTypeColor'})
+
+@Pipe({
+  name: 'pokemonTypeColor'
+})
 export class PokemonTypeColorPipe implements PipeTransform {
+
   transform(type: string): string {
-  
     let color: string;
   
     switch (type) {
@@ -52,6 +48,6 @@ export class PokemonTypeColorPipe implements PipeTransform {
     }
   
     return 'chip ' + color;
-  
   }
+
 }

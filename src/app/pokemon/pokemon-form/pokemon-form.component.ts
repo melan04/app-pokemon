@@ -1,32 +1,36 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { PokemonService } from "../pokemon.service";
-import { Pokemon } from "../pokemon";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Pokemon } from '../pokemon';
+import { PokemonService } from '../pokemon.service';
 
 @Component({
-  selector: "app-pokemon-form",
-  templateUrl: "./pokemon-form.component.html",
-  styleUrls: ["./pokemon-form.component.css"],
+  selector: 'app-pokemon-form',
+  templateUrl: './pokemon-form.component.html',
+  styleUrls: ['./pokemon-form.component.css']
 })
 export class PokemonFormComponent implements OnInit {
-  @Input() pokemon: Pokemon; // Pour passer un pokemon en entrée lorsque qu'on utilise le pokemon form
+  @Input() pokemon: Pokemon;
   types: string[];
+  isAddForm: boolean;
 
-  constructor(private pokemonService: PokemonService, private router: Router) {}
+  constructor(
+    private pokemonService: PokemonService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
-    this.types = this.pokemonService.getPokemonTypeList(); // recupère la liste de tous les types du Pokemon
+    this.types = this.pokemonService.getPokemonTypeList();
+    this.isAddForm = this.router.url.includes('add');
   }
 
   hasType(type: string): boolean {
-    // Détermine si le pokemon en cours d'édition possède le type de paramètre ou non
-    return this.pokemon.types.includes(type); // Si mon pokemon a dans ses types le type passé en paramètre . Include() renvoie 'true' ou 'false' , c'est du JS natif.
+    return this.pokemon.types.includes(type);
   }
 
   selectType($event: Event, type: string) {
-    // Pour savoir si la case et cochée ou décochée
-    const isChecked: boolean = ($event.target as HTMLInputElement).checked; // Si l'utilisateur a checké ou non la case
-    if (isChecked) {
+    const isChecked: boolean = ($event.target as HTMLInputElement).checked;
+
+    if(isChecked) {
       this.pokemon.types.push(type);
     } else {
       const index = this.pokemon.types.indexOf(type);
@@ -34,20 +38,26 @@ export class PokemonFormComponent implements OnInit {
     }
   }
 
-isTypesValid(type:string): boolean {
+  isTypesValid(type: string): boolean {
+    if(this.pokemon.types.length == 1 && this.hasType(type)) {
+      return false;
+    }
 
-  if(this.pokemon.types.length == 1 && this.hasType(type)) {
-return false;
-  }
+    if(this.pokemon.types.length > 2 && !this.hasType(type)) {
+      return false;
+    }
 
-  if (this.pokemon.types.length > 2 &&!this.hasType(type)) {
-    return false;
+    return true;
   }
-  return true
-}
 
   onSubmit() {
-    console.log("Submit form");
-    this.router.navigate(["/pokemon", this.pokemon.id]);
+    if(this.isAddForm) {
+      this.pokemonService.addPokemon(this.pokemon)
+        .subscribe((pokemon: Pokemon) => this.router.navigate(['/pokemon', pokemon.id]));
+    } else {
+      this.pokemonService.updatePokemon(this.pokemon)
+        .subscribe(() => this.router.navigate(['/pokemon', this.pokemon.id]));
+    }
   }
+
 }
